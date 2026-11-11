@@ -25,4 +25,4 @@ pytest>=8.0
 # pyodbc>=5.1
 
 # Optional Langfuse tracing (PostgreSQL trace persistence works without this).
-langfuse>=2.0,<3.0
+langfuse>=3.0,<4.0
