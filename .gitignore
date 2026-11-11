@@ -1,0 +1,55 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/uploads/
+data/documents/
+data/backups/
+reports/*.csv
+reports/*.pdf
+.pytest_cache/
+*.log
+
+# Python environments and cache
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Local databases and database backups
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.bak
+
+# Uploaded documents and generated data
+data/uploads/
+data/documents/
+data/backups/
+data/**/*.pdf
+data/**/*.png
+data/**/*.jpg
+data/**/*.jpeg
+
+# Generated reports
+reports/*.csv
+reports/*.pdf
+
+# Operating system files
+.DS_Store
+Thumbs.db
+data/demo/*.exe
+/notepad
+/python

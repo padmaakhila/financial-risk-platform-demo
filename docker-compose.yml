@@ -1,0 +1,52 @@
+# docker compose up --build            (then: docker compose run --rm api python -m scripts.seed_database)
+# docker compose --profile ollama up   (adds a local Ollama; then: docker compose exec ollama ollama pull qwen2.5:1.5b)
+# NOT tested in the build environment (no Docker there). Secrets come from .env (never commit it).
+x-app: &app
+  build: .
+  env_file: .env
+  environment:
+    DATABASE_URL: sqlite:////app/data/app.db
+    UPLOAD_DIR: /app/data/uploads
+    ERP_MOCK_URL: http://erp-mock:8101
+    VENDOR_MOCK_URL: http://vendor-mock:8102
+    BACKEND_URL: http://api:8000
+    OLLAMA_URL: http://ollama:11434
+  volumes:
+    - app-data:/app/data
+  restart: unless-stopped
+
+services:
+  erp-mock:
+    <<: *app
+    command: uvicorn backend.integrations.erp_mock_app:app --host 0.0.0.0 --port 8101
+  vendor-mock:
+    <<: *app
+    command: uvicorn backend.integrations.vendor_mock_app:app --host 0.0.0.0 --port 8102
+  api:
+    <<: *app
+    command: uvicorn backend.main:create_app --factory --host 0.0.0.0 --port 8000
+    ports: ["127.0.0.1:8000:8000"]
+    depends_on: [erp-mock, vendor-mock]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  worker:
+    <<: *app
+    command: python -m backend.workers.worker
+    depends_on: [api]
+  ui:
+    <<: *app
+    command: streamlit run app.py --server.port 8501 --server.address 0.0.0.0
+    ports: ["127.0.0.1:8501:8501"]
+    depends_on: [api]
+  ollama:
+    image: ollama/ollama
+    profiles: ["ollama"]
+    volumes: [ollama-models:/root/.ollama]
+    restart: unless-stopped
+
+volumes:
+  app-data:
+  ollama-models:

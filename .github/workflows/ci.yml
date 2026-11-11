@@ -1,0 +1,16 @@
+name: tests
+on: [push, pull_request]
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11", cache: pip }
+      - run: sudo apt-get update && sudo apt-get install -y tesseract-ocr
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q
+        env:
+          APP_ENV: test
+          SECRET_KEY: ci-only-secret-key-ci-only-secret-key-123456
+      - run: python -m scripts.run_evaluation --mode pure --out reports/ci_evaluation.md

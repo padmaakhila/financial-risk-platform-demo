@@ -1,0 +1,27 @@
+# Recommended: Python 3.11 (64-bit) on Windows. Ranges are used so pip can resolve
+# compatible wheels; if pip reports a conflict, see docs/TROUBLESHOOTING.md.
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.30
+python-multipart>=0.0.9
+sqlalchemy>=2.0.36,<2.1
+alembic>=1.13
+pydantic>=2.8,<3
+PyJWT>=2.8,<3
+httpx>=0.27
+streamlit>=1.38,<2
+pandas>=2.2
+plotly>=5.24
+pdfplumber>=0.11
+pytesseract>=0.3.10
+Pillow>=10.3
+rapidfuzz>=3.9
+scikit-learn>=1.5
+reportlab>=4.2
+langgraph>=0.2.50
+langgraph-checkpoint-sqlite>=2.0
+pytest>=8.0
+# Optional: SQL Server Express support (also needs "ODBC Driver 18 for SQL Server")
+# pyodbc>=5.1
+
+# Optional Langfuse tracing (PostgreSQL trace persistence works without this).
+langfuse>=2.0,<3.0
