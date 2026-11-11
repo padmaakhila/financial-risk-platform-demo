@@ -1,17 +1,21 @@
-"""Streamlit glue: session handling and API-call error handling. Session state only holds UI continuity
-(the access token, the user's name/role and form keys); all business data lives in the backend database."""
+
+"""Streamlit glue: session handling and API-call error handling."""
 from __future__ import annotations
 
+import os
 import streamlit as st
 
-from backend.auth.permissions import can  # navigation hint only; the API enforces permissions on every call
-from backend.core.config import get_settings
+from backend.auth.permissions import can
 from ui.api_client import ApiClient, ApiProblem, Unauthorized
 from ui.format import friendly_error
 
 
 def base_url() -> str:
-    return get_settings().backend_url
+    """Get the deployed FastAPI URL without loading backend database settings."""
+    try:
+        return st.secrets["BACKEND_URL"].rstrip("/")
+    except (KeyError, FileNotFoundError):
+        return os.getenv("BACKEND_URL", "http://localhost:8000").rstrip("/")
 
 
 def api() -> ApiClient:
@@ -25,7 +29,10 @@ def user() -> dict | None:
 def sign_in(username: str, password: str) -> None:
     data = ApiClient(base_url()).login(username, password)
     st.session_state["token"] = data["access_token"]
-    st.session_state["user"] = {"username": data["username"], "role": data["role"]}
+    st.session_state["user"] = {
+        "username": data["username"],
+        "role": data["role"],
+    }
 
 
 def sign_out() -> None:
@@ -34,6 +41,7 @@ def sign_out() -> None:
             api().post("/api/auth/logout")
         except ApiProblem:
             pass
+
     for key in list(st.session_state.keys()):
         del st.session_state[key]
 
@@ -43,21 +51,25 @@ def require_login(permission: str | None = None) -> dict:
     if not u:
         st.warning("Please sign in first (open **Sign in** in the sidebar).")
         st.stop()
+
     if permission and not can(u["role"], permission):
         st.error(f"Your role ({u['role']}) cannot open this page.")
         st.stop()
+
     return u
 
 
 def call(fn, *args, quiet: tuple = (), **kwargs):
-    """Run an API call. On failure show a friendly message and return None (401 ends the session)."""
+    """Run an API call and handle authentication and API errors."""
     try:
         return fn(*args, **kwargs)
     except Unauthorized:
         for key in ("token", "user"):
             st.session_state.pop(key, None)
+
         st.warning("Your session has ended. Please sign in again.")
         st.stop()
+
     except ApiProblem as e:
         if e.code not in quiet:
             st.error(friendly_error(e))
