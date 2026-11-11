@@ -10,3 +10,19 @@ data/demo
 data/backups
 reports/*.csv
 reports/*.pdf
+# Environment-specific secrets
+.env.*
+!.env.example
+
+# Streamlit secrets
+.streamlit/secrets.toml
+
+# Database backup files
+*.dump
+*.backup
+*.bak
+
+# Python test and cache files
+.pytest_cache
+.mypy_cache
+.coverage
