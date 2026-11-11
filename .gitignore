@@ -56,3 +56,5 @@ data/demo/*.exe
 *.dump
 *.backup
 *.bak
+.neon
+node_modules/
