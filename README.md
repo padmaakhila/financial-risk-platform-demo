@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Financial Document & Risk Analysis Platform
 
 A web portal for **Accounts Payable**: upload invoices, POs and goods-received notes; extract the data; **recalculate and match with deterministic code**; flag duplicates and discrepancies; get **plain-language explanations tied to the original evidence**; let a **human approve, reject or request documents**; pay through a mock ERP only after a recorded approval; keep a **hash-chained audit trail**; see dashboards and download reports.
@@ -74,3 +75,7 @@ mock_app:app --port 8102
 uvicorn backend.main:create_app --factory --port 8000     # API docs: http://localhost:8000/docs
 python -m backend.workers.worker
 streamlit run app.py                                      # http://localhost:8501
+=======
+# financial-risk-platform-demo
+Financial Document and Risk Analysis Platform – Demo
+>>>>>>> 230c5de853eff935538218d3cbc736b7c77c0e3e
