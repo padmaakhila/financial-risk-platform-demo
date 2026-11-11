@@ -237,7 +237,35 @@ def explanation_panel(detail: dict) -> None:
         ai["source"] if ai else None
     )
 
-    getattr(st, kind)(message)
+    # Custom colours apply only to the AI explanation status banner.
+    banner_styles = {
+        "success": ("#E8F5EE", "#14532D", "#86C9A0"),
+        "warning": ("#FFF7E6", "#854D0E", "#E8C878"),
+        "info": ("#E8F1FF", "#1E40AF", "#93B4E8"),
+    }
+
+    bg, text_color, border_color = banner_styles.get(
+        kind,
+        ("#E8F1FF", "#1E40AF", "#93B4E8"),
+    )
+
+    st.markdown(
+        f"""
+        <div style="
+            background-color: {bg};
+            color: {text_color};
+            border: 1px solid {border_color};
+            border-radius: 10px;
+            padding: 14px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.5;
+        ">
+            {html.escape(message)}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     if not ai:
         return
